@@ -14,7 +14,7 @@ describe('demoblazeTests', () => {
         cy.visit('https://www.demoblaze.com/');
     });
 
-    it('should allow to register and then login', () => {
+    it('should allow to register', () => {
         cy.get('#signin2').click();
         cy.wait(1000);
         cy.get('#sign-username').type(testData.username);
@@ -24,37 +24,43 @@ describe('demoblazeTests', () => {
         cy.on('window:alert', (alertText) => {
             expect(alertText).to.eq('Sign up successful.');
         });
-
-        cy.get('#login2').click();
-        cy.wait(1000);
-        cy.get('#loginusername').type(testData.username);
-        cy.get('#loginpassword').type(testData.password);
-        cy.get('#logInModal > .modal-dialog > .modal-content > .modal-footer > .btn-primary').click({ force: true });
-        cy.get('#nameofuser').should('contain', testData.username);
     });
 
-    it('should allow to add Samsung Galaxy s6 to the cart after login', () => {
-        cy.get('#signin2').click();
-        cy.wait(1000);
-        cy.get('#sign-username').type(testData.username);
-        cy.get('#sign-password').type(testData.password);
-        cy.get('#signInModal > .modal-dialog > .modal-content > .modal-footer > .btn-primary').click({ force: true });
+    describe('Logged in user actions', () => {
+        beforeEach(() => {
+            cy.get('#signin2').click();
+            cy.wait(1000);
+            cy.get('#sign-username').type(testData.username);
+            cy.get('#sign-password').type(testData.password);
+            cy.get('#signInModal > .modal-dialog > .modal-content > .modal-footer > .btn-primary').click({ force: true });
 
-        cy.on('window:alert', (alertText) => {
-            expect(alertText).to.eq('Sign up successful.');
+            cy.on('window:alert', (alertText) => {
+                expect(alertText).to.eq('Sign up successful.');
+            });
         });
 
-        cy.get('#login2').click();
-        cy.wait(1000);
-        cy.get('#loginusername').type(testData.username);
-        cy.get('#loginpassword').type(testData.password);
-        cy.get('#logInModal > .modal-dialog > .modal-content > .modal-footer > .btn-primary').click({ force: true });
-        cy.get('#nameofuser').should('contain', testData.username);
+        it('should allow to login', () => {
+            cy.get('#login2').click();
+            cy.wait(1000);
+            cy.get('#loginusername').type(testData.username);
+            cy.get('#loginpassword').type(testData.password);
+            cy.get('#logInModal > .modal-dialog > .modal-content > .modal-footer > .btn-primary').click({ force: true });
+            cy.get('#nameofuser').should('contain', testData.username);
+        });
 
-        cy.contains('.hrefch', testData.product).click();
-        cy.get('.col-sm-12 > .btn').click();
+        it('should allow to add Samsung Galaxy s6 to the cart after login', () => {
+            cy.get('#login2').click();
+            cy.wait(1000);
+            cy.get('#loginusername').type(testData.username);
+            cy.get('#loginpassword').type(testData.password);
+            cy.get('#logInModal > .modal-dialog > .modal-content > .modal-footer > .btn-primary').click({ force: true });
+            cy.get('#nameofuser').should('contain', testData.username);
 
-        cy.get('#cartur').click();
-        cy.get('.success > :nth-child(2)').should('contain', testData.product);
+            cy.contains('.hrefch', testData.product).click();
+            cy.get('.col-sm-12 > .btn').click();
+
+            cy.get('#cartur').click();
+            cy.get('.success > :nth-child(2)').should('contain', testData.product);
+        });
     });
 });
